@@ -1,0 +1,5 @@
+# Large local training and bathymetry artifacts stay outside the source PR.
+IBCSO_bed.tif
+polaris_engine1_dataset.npz
+live_cache/
+__pycache__/

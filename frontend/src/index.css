@@ -1,0 +1,125 @@
+@import "cesium/Build/Cesium/Widgets/widgets.css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Authentic IEC 62288 / Naval ECDIS Maritime High-Contrast Palette */
+  --ecdis-bg: #070a12;
+  --ecdis-surface: #0c121e;
+  --ecdis-surface-elevated: #111a2c;
+  --ecdis-surface-hover: #172238;
+  --ecdis-border: #1e293b;
+  --ecdis-border-subtle: #162032;
+  
+  --ecdis-text-primary: #f8fafc;
+  --ecdis-text-secondary: #94a3b8;
+  --ecdis-text-muted: #64748b;
+  
+  --ecdis-cyan: #0ea5e9;
+  --ecdis-cyan-hover: #38bdf8;
+  --ecdis-green: #10b981;
+  --ecdis-amber: #f59e0b;
+  --ecdis-red: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--ecdis-bg);
+  color: var(--ecdis-text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tabular figures for all telemetry */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Industrial Maritime Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #070a12;
+}
+::-webkit-scrollbar-thumb {
+  background: #253349;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3b4f6e;
+}
+
+/* Industrial ECDIS Panels */
+.ecdis-panel {
+  background: #0c121e;
+  border: 1px solid #1e293b;
+}
+
+.ecdis-card {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+}
+
+/* Industrial ECDIS Precision Range Slider */
+input[type="range"] {
+  accent-color: #0284c7;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  background: #1e293b;
+  border-radius: 2px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: #38bdf8;
+  border: 1px solid #ffffff;
+  cursor: pointer;
+  margin-top: -4px;
+  transition: background-color 0.15s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: #0ea5e9;
+}
+
+/* Google Earth Timeline & Canvas Tweaks - Remove all Cesium / provider watermarks */
+.cesium-viewer-bottom,
+.cesium-widget-credits,
+.cesium-credit-logoContainer,
+.cesium-credit-textContainer,
+.cesium-credit-expand-link,
+.cesium-viewer-timelineContainer,
+.cesium-viewer-animationContainer {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  position: absolute !important;
+  top: -9999px !important;
+}
+

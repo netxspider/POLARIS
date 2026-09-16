@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Node
+node_modules/
+
+# Frontend build output
+dist/
+build/
+
+# Local datasets
+Datasets/
+
+# Hugging Face dataset clone
+my-project-dataset/
+
+# Environment/secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Large datasets & binaries
+backend/data/
+*.mp4
+pitch_video_assets/
+
+# Teamwork agent dispatch logs
+.agents/
+
+*.tif
+*.npz

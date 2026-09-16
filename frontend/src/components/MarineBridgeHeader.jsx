@@ -518,7 +518,7 @@ export default function MarineBridgeHeader({
               ? 'bg-cyan-950/80 text-cyan-300 border-cyan-600 shadow-xs'
               : 'bg-[#0b101b] text-slate-400 border-slate-700/80 hover:text-slate-200'
           }`}
-          title="Toggle Polar Earth Observation Satellites (Sentinel-1A, CryoSat-2, ICESat-2, Aqua AMSR2)"
+          title="Toggle Polar Earth Observation Satellites (CryoSat-2, ICESat-2, Aqua AMSR2)"
         >
           <Radio className="w-3 h-3 text-cyan-400 shrink-0" />
           <span className="hidden 3xl:inline">SATS</span>

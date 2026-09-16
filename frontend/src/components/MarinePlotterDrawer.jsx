@@ -39,8 +39,6 @@ export default function MarinePlotterDrawer({
   onChangeMapStyle,
   showRiskGrid,
   onToggleRiskGrid,
-  showGeeSentinel1,
-  onToggleGeeSentinel1,
   showGeeSeaIce,
   onToggleGeeSeaIce,
   showIcebergs,
@@ -51,8 +49,6 @@ export default function MarinePlotterDrawer({
   onToggleStations,
   showBathymetry,
   onToggleBathymetry,
-  showSatelliteTracks = true,
-  onToggleSatelliteTracks,
   telemetry,
   weather,
   anomalyActive,
@@ -292,44 +288,6 @@ export default function MarinePlotterDrawer({
               )}
             </div>
 
-            {/* High-Resolution Sentinel-1 SAR Radar */}
-            <label className="flex items-center justify-between p-2.5 rounded bg-[#0b101b] border border-slate-800 hover:border-slate-700 cursor-pointer transition-colors">
-              <div className="flex items-center space-x-2.5">
-                <Radio className="w-4 h-4 text-amber-400" />
-                <div>
-                  <div className="font-semibold text-white text-xs">Sentinel-1 C-Band SAR Radar</div>
-                  <div className="text-[10px] font-mono text-slate-400">10m SAR Surface Penetration</div>
-                </div>
-              </div>
-              <input
-                type="checkbox"
-                id="layer-toggle-sentinel1"
-                name="layer-toggle-sentinel1"
-                checked={showGeeSentinel1}
-                onChange={onToggleGeeSentinel1}
-                className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-sky-500 focus:ring-0 cursor-pointer accent-sky-500"
-              />
-            </label>
-
-            {/* Authentic Satellite Trajectory Tracks (Sentinel-1 SAR / BYU) */}
-            <label className="flex items-center justify-between p-2.5 rounded bg-[#0b101b] border border-slate-800 hover:border-slate-700 cursor-pointer transition-colors">
-              <div className="flex items-center space-x-2.5">
-                <Navigation className="w-4 h-4 text-cyan-400" />
-                <div>
-                  <div className="font-semibold text-white text-xs">Satellite Trajectory Tracks</div>
-                  <div className="text-[10px] font-mono text-slate-400">Sentinel-1 SAR / BYU Tracks &amp; Fixes</div>
-                </div>
-              </div>
-              <input
-                type="checkbox"
-                id="layer-toggle-sat-tracks"
-                name="layer-toggle-sat-tracks"
-                checked={showSatelliteTracks}
-                onChange={onToggleSatelliteTracks}
-                className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-sky-500 focus:ring-0 cursor-pointer accent-sky-500"
-              />
-            </label>
-
             {/* Tracked Tabular Icebergs & Keel Footings */}
             <label className="flex items-center justify-between p-2.5 rounded bg-[#0b101b] border border-slate-800 hover:border-slate-700 cursor-pointer transition-colors">
               <div className="flex items-center space-x-2.5">
@@ -415,7 +373,7 @@ export default function MarinePlotterDrawer({
                     <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
                     <span>SATELLITE TRACK</span>
                   </span>
-                  <span className="text-slate-400">SENTINEL-1 SAR / BYU</span>
+                  <span className="text-slate-400">USNIC / BYU</span>
                 </div>
 
                 <div className="flex items-center space-x-2 pt-0.5">
@@ -428,7 +386,7 @@ export default function MarinePlotterDrawer({
                         type: 'iceberg',
                         name: berg.name || `Iceberg ${berg.id}`,
                         subtitle: berg.subtitle || 'Tracked Antarctic Tabular Iceberg',
-                        description: berg.description || `Drifting iceberg ${berg.id} tracked via Sentinel-1 SAR Radar satellite imagery and LSTM trajectory physics equations.`
+                        description: berg.description || `Drifting iceberg ${berg.id} tracked via USNIC radar satellite telemetry and Engine 2 XGBoost drift physics.`
                       });
                     }}
                     className="flex-1 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white text-[11px] font-semibold flex items-center justify-center space-x-1 border border-slate-700 transition-colors"
@@ -599,7 +557,7 @@ export default function MarinePlotterDrawer({
 
                   <div className="p-2 rounded bg-[#0b101b] border border-slate-800 text-[10px] space-y-1">
                     <div className="font-bold text-slate-300">Radar &amp; Sensor Signature:</div>
-                    <div className="text-slate-400 font-mono">{selectedEntity.radarSignature || 'Sentinel-1 C-Band SAR (-11.2 dB)'}</div>
+                    <div className="text-slate-400 font-mono">{selectedEntity.radarSignature || 'Polar Radar & Altimetry (-11.2 dB)'}</div>
                     <div className="font-bold text-slate-300 pt-1">Calving Origin:</div>
                     <div className="text-slate-400">{selectedEntity.calvingGlacier || 'Amery Ice Shelf'}</div>
                   </div>

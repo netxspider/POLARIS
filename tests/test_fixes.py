@@ -22,16 +22,26 @@ class TestPolarisFixes(unittest.TestCase):
         self.assertIn("C36", positions)
 
     def test_global_fairway_land_avoidance_miami(self):
-        # Route from Miami (25.76, -80.19) to Bharati (-69.41, 76.19)
-        path = self.router.route_to_polar_gate(25.76, -80.19, target_lon=76.19)
+        # Route from Miami (25.788, -80.177) to Bharati (-69.41, 76.19)
+        path = self.router.route_to_polar_gate(25.788, -80.177, target_lon=76.19)
         self.assertGreaterEqual(len(path), 3)
         for i in range(len(path) - 1):
             p1, p2 = path[i], path[i + 1]
             self.assertTrue(is_water_path(p1, p2), f"Segment {p1} -> {p2} intersects land!")
 
+    def test_american_port_positive_longitude_auto_correction(self):
+        # User entered Miami coordinates without minus sign: (25.788, 80.177)
+        path = self.router.route_to_polar_gate(25.788, 80.177, target_lon=76.19)
+        self.assertGreaterEqual(len(path), 3)
+        # Verify it starts off Florida / Atlantic, NOT India
+        self.assertLess(path[0][1], -70.0, "Route should start in Western Atlantic off Florida")
+        for i in range(len(path) - 1):
+            p1, p2 = path[i], path[i + 1]
+            self.assertTrue(is_water_path(p1, p2), f"Segment {p1} -> {p2} intersects land!")
+
     def test_global_fairway_land_avoidance_indian_ocean(self):
-        # Route from (25.0, 80.0) to Bharati (-69.41, 76.19)
-        path = self.router.route_to_polar_gate(25.0, 80.0, target_lon=76.19)
+        # Route from Goa / Mormugao (15.4, 73.8) to Bharati (-69.41, 76.19)
+        path = self.router.route_to_polar_gate(15.4, 73.8, target_lon=76.19)
         self.assertGreaterEqual(len(path), 2)
         for i in range(len(path) - 1):
             p1, p2 = path[i], path[i + 1]

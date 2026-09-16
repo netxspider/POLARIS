@@ -343,16 +343,14 @@ const CesiumViewer = forwardRef(function CesiumViewer({
   playbackSpeed,
   cameraMode = 'globe',
   mapStyle = 'google-satellite', // 'google-satellite' | 'google-hybrid' | 'esri-satellite'
-  tacticalStyle = 'normal',      // 'normal' | 'surveillance' | 'thermal' | 'retro' | 'snow'
-  showSatellites = true,
+  showSatellites = false,
   showRiskGrid,
-  showGeeSentinel1 = false,
   showGeeSeaIce = false,
   showIcebergs,
   showMountains,
   showStations,
   showBathymetry = true,
-  showSatelliteTracks = true,
+  showSatelliteTracks = false,
   onOverpassUpdate,
   selectedEntity = null,
   anomalyActive,
@@ -1765,31 +1763,7 @@ const CesiumViewer = forwardRef(function CesiumViewer({
     };
   }, [scenarioData?.isModelRoute, showBathymetry, useModelLayers]);
 
-  // Load and Render GEE Sentinel-1 SAR Radar Dual-Pol (VV/VH) Tile Layer
-  useEffect(() => {
-    if (!viewerRef.current || viewerRef.current.isDestroyed()) return;
-    const viewer = viewerRef.current;
 
-    if (geeSentinel1LayerRef.current) {
-      viewer.imageryLayers.remove(geeSentinel1LayerRef.current);
-      geeSentinel1LayerRef.current = null;
-    }
-
-    if (showGeeSentinel1) {
-      try {
-        const sarProvider = new Cesium.UrlTemplateImageryProvider({
-          url: '/api/gee/sentinel1/tiles/{z}/{x}/{y}.png',
-          credit: 'Google Earth Engine: Sentinel-1 C-Band SAR Dual-Pol GRD',
-          maximumLevel: 14
-        });
-        const layer = viewer.imageryLayers.addImageryProvider(sarProvider);
-        layer.alpha = 0.85;
-        geeSentinel1LayerRef.current = layer;
-      } catch (err) {
-        console.warn('GEE Sentinel-1 SAR tile provider error:', err);
-      }
-    }
-  }, [showGeeSentinel1]);
 
   // Load and Render GEE AMSR2 Sea-Ice Concentration Tile Layer
   useEffect(() => {
@@ -2220,7 +2194,10 @@ const CesiumViewer = forwardRef(function CesiumViewer({
     const viewer = viewerRef.current;
 
     if (!showSatelliteTracks) {
-      satelliteTrackEntitiesRef.current.forEach((e) => { e.show = false; });
+      satelliteTrackEntitiesRef.current.forEach((e) => {
+        try { viewer.entities.remove(e); } catch {}
+      });
+      satelliteTrackEntitiesRef.current = [];
       return;
     }
 
@@ -2931,16 +2908,6 @@ const CesiumViewer = forwardRef(function CesiumViewer({
           heightReference: Cesium.HeightReference.NONE,
           distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 8000000)
         },
-        path: {
-          resolution: 12,
-          material: new Cesium.PolylineGlowMaterialProperty({
-            glowPower: 0.25,
-            color: Cesium.Color.fromCssColorString('#38bdf8').withAlpha(0.8)
-          }),
-          width: 3.5,
-          leadTime: 0,
-          trailTime: 180000
-        },
         label: {
           text: '🚢 RV POLAR EXPLORER',
           font: 'bold 11px "Segoe UI", Roboto, sans-serif',
@@ -3006,7 +2973,8 @@ const CesiumViewer = forwardRef(function CesiumViewer({
 
       // 2. Maritime Navigation Fairway (India Bay Mooring ➔ Bharati Anchorage)
       const marineWaypoints = waypoints.slice(1);
-      const marinePositions = marineWaypoints.map((wp) => Cesium.Cartesian3.fromDegrees(wp.lon, wp.lat, 10.0));
+      const denseSamples = densifySurfaceWaypoints(marineWaypoints);
+      const marinePositions = denseSamples.map((s) => s.pos);
       const routePolyline = viewer.entities.add({
         name: scenarioData.isReplan ? 'Replanned Marine Fairway' : 'Optimal Marine Fairway',
         polyline: {
@@ -3021,7 +2989,8 @@ const CesiumViewer = forwardRef(function CesiumViewer({
       });
       routePolylineEntityRef.current = routePolyline;
     } else {
-      const routePositions = waypoints.map((wp) => Cesium.Cartesian3.fromDegrees(wp.lon, wp.lat, 10.0));
+      const denseSamples = densifySurfaceWaypoints(waypoints);
+      const routePositions = denseSamples.map((s) => s.pos);
       const routePolyline = viewer.entities.add({
         name: scenarioData.isReplan ? 'Replanned Avoidance Route' : 'Optimal Planned Route',
         polyline: {
@@ -3034,6 +3003,7 @@ const CesiumViewer = forwardRef(function CesiumViewer({
           clampToGround: false
         }
       });
+      routePolylineEntityRef.current = routePolyline;
     }
   }, [scenarioData]);
 

@@ -215,6 +215,17 @@ class MaritimeFairwayRouter:
         Finds the shortest open-ocean path from (start_lat, start_lon) to the Antarctic
         gateway along -50.0°S, avoiding all continental landmasses.
         """
+        # Check if coordinates represent an American / Western hemisphere port entered without negative sign
+        if start_lon > 0:
+            d_pos = min(haversine_nm(start_lat, start_lon, pt[0], pt[1]) for pt in self.nodes.values())
+            d_neg = min(haversine_nm(start_lat, -start_lon, pt[0], pt[1]) for pt in self.nodes.values())
+            if d_neg < 200.0 and d_pos > 300.0:
+                logger.warning(
+                    "Auto-correcting American port longitude from +%.3f to -%.3f (fairway dist: %.1f nm vs %.1f nm)",
+                    start_lon, start_lon, d_neg, d_pos
+                )
+                start_lon = -start_lon
+
         # Ensure start point is in water
         snap_lat, snap_lon = self.snap_to_water(start_lat, start_lon)
         start_pt = (snap_lat, snap_lon)

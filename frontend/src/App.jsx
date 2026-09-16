@@ -64,9 +64,8 @@ export default function App() {
   const [mapStyle, setMapStyle] = useState('google-satellite'); // 'google-satellite' | 'esri-satellite' | 'google-hybrid'
   const [tacticalStyle, setTacticalStyle] = useState('normal'); // 'normal' | 'surveillance' | 'thermal' | 'retro' | 'snow'
   const [showIntelHud, setShowIntelHud] = useState(true);
-  const [showSatellites, setShowSatellites] = useState(true);
+  const [showSatellites, setShowSatellites] = useState(false);
   const [showRiskGrid, setShowRiskGrid] = useState(true);
-  const [showGeeSentinel1, setShowGeeSentinel1] = useState(false);
   const [showGeeSeaIce, setShowGeeSeaIce] = useState(false);
   const [geeStatus, setGeeStatus] = useState(null);
   const [modelStatus, setModelStatus] = useState(null);
@@ -76,7 +75,7 @@ export default function App() {
   const [showMountains, setShowMountains] = useState(true);
   const [showStations, setShowStations] = useState(true);
   const [showBathymetry, setShowBathymetry] = useState(true);
-  const [showSatelliteTracks, setShowSatelliteTracks] = useState(true);
+  const [showSatelliteTracks, setShowSatelliteTracks] = useState(false);
   const [activeOverpass, setActiveOverpass] = useState(null);
 
   // Live telemetry & marine weather
@@ -139,7 +138,8 @@ export default function App() {
       setModelStatus((current) => ({ ...current, lastRefresh: result.generatedAt, sources: result.sources }));
       setShowRiskGrid(true);
       setShowIcebergs(true);
-      setShowSatelliteTracks(true);
+      setShowSatellites(false);
+      setShowSatelliteTracks(false);
       setForecastStep(0);
       setStreamMode('simulation');
     } catch (err) {
@@ -461,7 +461,6 @@ export default function App() {
         tacticalStyle={tacticalStyle}
         showSatellites={showSatellites}
         showRiskGrid={showRiskGrid}
-        showGeeSentinel1={showGeeSentinel1}
         showGeeSeaIce={showGeeSeaIce}
         showIcebergs={showIcebergs}
         showMountains={showMountains}
@@ -581,8 +580,6 @@ export default function App() {
         onToggleSatellites={() => setShowSatellites(!showSatellites)}
         showRiskGrid={showRiskGrid}
         onToggleRiskGrid={() => setShowRiskGrid(!showRiskGrid)}
-        showGeeSentinel1={showGeeSentinel1}
-        onToggleGeeSentinel1={() => setShowGeeSentinel1(!showGeeSentinel1)}
         showGeeSeaIce={showGeeSeaIce}
         onToggleGeeSeaIce={() => setShowGeeSeaIce(!showGeeSeaIce)}
         showIcebergs={showIcebergs}
@@ -593,8 +590,6 @@ export default function App() {
         onToggleStations={() => setShowStations(!showStations)}
         showBathymetry={showBathymetry}
         onToggleBathymetry={() => setShowBathymetry(!showBathymetry)}
-        showSatelliteTracks={showSatelliteTracks}
-        onToggleSatelliteTracks={() => setShowSatelliteTracks(!showSatelliteTracks)}
         telemetry={telemetry}
         weather={weather}
         anomalyActive={anomalyActive}

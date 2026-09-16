@@ -332,7 +332,7 @@ class ModelPipelineService:
             is_global_departure = (start_lat > nav.LAT_NORTH or start_lon < nav.LON_WEST or start_lon > nav.LON_EAST)
 
             if is_global_departure:
-                ocean_path = fairway_router.route_to_polar_gate(start_lat, start_lon, target_lon=end_lon)
+                ocean_path = fairway_router.route_to_polar_gate(start_lat, start_lon, target_lat=end_lat, target_lon=end_lon)
                 polar_gate = ocean_path[-1]
                 marine_start = self._nearest_navigable(nav, bathy, polar_gate[0], polar_gate[1])
                 marine_end = self._nearest_navigable(nav, bathy, end_lat, end_lon)

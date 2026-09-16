@@ -12,7 +12,7 @@ export default function MapLayerLegend({ showRiskGrid, showBathymetry, forecastS
   if (!showRiskGrid && !showBathymetry) return null;
 
   return (
-    <aside className="pointer-events-auto absolute right-3 top-[23rem] z-30 w-60 rounded-lg border border-slate-700/80 bg-[#07111b]/95 p-3 font-mono text-[10px] text-slate-200 shadow-2xl backdrop-blur-md">
+    <aside className="w-[min(23rem,calc(100vw-1.5rem))] rounded-lg border border-slate-700/80 bg-[#07111b]/95 p-3 font-mono text-[10px] text-slate-200 shadow-2xl backdrop-blur-md">
       {showRiskGrid && (
         <div className="mb-3.5">
           <div className="mb-1.5 flex items-center justify-between text-[10px] font-bold tracking-wider text-cyan-200">

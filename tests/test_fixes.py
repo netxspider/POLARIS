@@ -48,5 +48,17 @@ class TestPolarisFixes(unittest.TestCase):
             self.assertTrue(is_water_path(p1, p2), f"Segment {p1} -> {p2} intersects land!")
 
 
+    def test_polar_entry_avoids_boundary_crawl(self):
+        # Miami -> Bharati
+        path = self.router.route_to_polar_gate(25.788, -80.177, target_lat=-69.41, target_lon=76.19)
+        polar_gate = path[-1]
+        # Should enter near 0°E (Atlantic sector), NOT crawl all the way to 76°E along -50°S
+        self.assertEqual(polar_gate[0], -50.0)
+        self.assertLessEqual(polar_gate[1], 10.0, f"Expected gate <= 10.0°E, got {polar_gate[1]}°E")
+        # Ensure path does not contain intermediate boundary crawl gates
+        gate_lons = [p[1] for p in path if p[0] == -50.0]
+        self.assertEqual(len(gate_lons), 1, f"Expected exactly 1 gate at -50°S, got {len(gate_lons)}: {gate_lons}")
+
+
 if __name__ == "__main__":
     unittest.main()

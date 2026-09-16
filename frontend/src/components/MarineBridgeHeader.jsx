@@ -18,7 +18,6 @@ import {
   Search,
   MapPin,
   X,
-  Crosshair,
   Zap
 } from 'lucide-react';
 import { calculatePolarCodeRIO } from '../utils/polarCode';
@@ -460,72 +459,8 @@ export default function MarineBridgeHeader({
         </button>
       </div>
 
-      {/* Right Wing: Tactical Recon Views, Camera Views, Anomaly Hazard Replan, Data Mode, & UTC Chronometer */}
+      {/* Right Wing: Camera Views, Anomaly Hazard Replan, Data Mode, & UTC Chronometer */}
       <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-        {/* Marine ECDIS Display Palette Selector (IEC 62288) */}
-        <div className="bg-[#0b101b] border border-slate-700/80 rounded p-0.5 flex items-center h-8 shrink-0" role="group" aria-label="ECDIS Display Palettes">
-          {[
-            { id: 'normal', label: 'DAY', title: 'ECDIS Standard Day Mode (Natural True-Color)' },
-            { id: 'night', label: 'NIGHT', title: 'ECDIS Low-Glare Night Bridge Watch (IHO S-52)' },
-            { id: 'radar', label: 'RADAR', title: 'Marine SAR Radar High-Contrast Ice Mode' },
-            { id: 'snow', label: 'BLIZ', title: 'Antarctic Polar Blizzard Simulation' }
-          ].map((mode) => (
-            <button
-              key={mode.id}
-              type="button"
-              onClick={() => onChangeTacticalStyle && onChangeTacticalStyle(mode.id)}
-              title={mode.title}
-              className={`px-1 sm:px-1.5 h-6 rounded-sm text-[10px] font-mono font-bold transition-all ${
-                tacticalStyle === mode.id
-                  ? mode.id === 'night' 
-                    ? 'bg-amber-500 text-black shadow-xs font-extrabold'
-                    : mode.id === 'radar'
-                    ? 'bg-emerald-500 text-black shadow-xs font-extrabold'
-                    : mode.id === 'snow'
-                    ? 'bg-cyan-400 text-black shadow-xs font-extrabold'
-                    : 'bg-sky-500 text-white shadow-xs font-extrabold'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
-              }`}
-            >
-              {mode.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Marine ECDIS Bridge HUD Toggle Button */}
-        <button
-          type="button"
-          onClick={onToggleIntelHud}
-          aria-label="Toggle Marine ECDIS Bridge HUD"
-          className={`h-8 px-2 rounded text-[10px] font-mono font-bold flex items-center gap-1 transition-colors border shrink-0 ${
-            showIntelHud
-              ? 'bg-sky-950/80 text-sky-300 border-sky-600 shadow-xs'
-              : 'bg-[#0b101b] text-slate-400 border-slate-700/80 hover:text-slate-200'
-          }`}
-          title="Toggle Marine ECDIS Bridge Navigation Watch HUD (IEC 62288 / IHO S-52)"
-        >
-          <Crosshair className="w-3 h-3 text-sky-400 shrink-0" />
-          <span className="hidden 3xl:inline">HUD</span>
-        </button>
-
-        {/* Polar Earth Observation Satellites Toggle Button */}
-        <button
-          type="button"
-          onClick={onToggleSatellites}
-          aria-label="Toggle Polar Satellites Orbit Tracks"
-          className={`h-8 px-2 rounded text-[10px] font-mono font-bold flex items-center gap-1 transition-colors border shrink-0 ${
-            showSatellites
-              ? 'bg-cyan-950/80 text-cyan-300 border-cyan-600 shadow-xs'
-              : 'bg-[#0b101b] text-slate-400 border-slate-700/80 hover:text-slate-200'
-          }`}
-          title="Toggle Polar Earth Observation Satellites (CryoSat-2, ICESat-2, Aqua AMSR2)"
-        >
-          <Radio className="w-3 h-3 text-cyan-400 shrink-0" />
-          <span className="hidden 3xl:inline">SATS</span>
-        </button>
-
-        <div className="h-5 w-px bg-slate-800 shrink-0 self-center hidden sm:block" />
-
         {/* Camera Segmented Control (Industrial ECDIS Style: Globe, Chase, 2D) */}
         <div className="bg-[#0b101b] border border-slate-700/80 rounded p-0.5 flex items-center h-8 shrink-0" role="group" aria-label="ECDIS Camera Views">
           {[

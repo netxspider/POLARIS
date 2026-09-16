@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Cpu, Navigation, RefreshCw, Compass, Anchor, AlertTriangle } from 'lucide-react';
+import { Cpu, Navigation, RefreshCw, Compass, MapPin, AlertTriangle } from 'lucide-react';
 
-const PRESETS = [
-  { name: '🇺🇸 Miami Port', lat: '25.788', lon: '-80.177', destLat: '-69.41', destLon: '76.19' },
-  { name: '🇺🇸 New York', lat: '40.712', lon: '-74.006', destLat: '-69.41', destLon: '76.19' },
-  { name: '🇿🇦 Cape Town', lat: '-33.924', lon: '18.424', destLat: '-69.41', destLon: '76.19' },
-  { name: '🇦🇶 Maitri Base', lat: '-70.77', lon: '11.73', destLat: '-69.41', destLon: '76.19' },
-  { name: '🇮🇳 Goa / Mormugao', lat: '15.400', lon: '73.800', destLat: '-69.41', destLon: '76.19' }
+const REFERENCE_COORDINATES = [
+  { name: '🇺🇸 Miami Port', lat: '25.788', lon: '-80.177' },
+  { name: '🇺🇸 New York', lat: '40.712', lon: '-74.006' },
+  { name: '🇿🇦 Cape Town', lat: '-33.924', lon: '18.424' },
+  { name: '🇮🇳 Goa / Mormugao', lat: '15.400', lon: '73.800' },
+  { name: '🇦🇶 Maitri Base', lat: '-70.770', lon: '11.730' },
+  { name: '🇦🇶 Bharati Base (Dest)', lat: '-69.410', lon: '76.190' }
 ];
 
 const DEFAULTS = {
@@ -21,13 +22,8 @@ export default function ModelRouteControls({ onRun, isLoading, modelStatus, onOp
 
   const update = (key) => (event) => setValues((current) => ({ ...current, [key]: event.target.value }));
 
-  const applyPreset = (preset) => {
-    setValues({
-      sourceLat: preset.lat,
-      sourceLon: preset.lon,
-      destinationLat: preset.destLat,
-      destinationLon: preset.destLon
-    });
+  const setSource = (lat, lon) => {
+    setValues((prev) => ({ ...prev, sourceLat: lat, sourceLon: lon }));
   };
 
   const sLat = parseFloat(values.sourceLat);
@@ -45,7 +41,7 @@ export default function ModelRouteControls({ onRun, isLoading, modelStatus, onOp
   };
 
   return (
-    <section className="absolute right-3 top-16 z-30 w-[min(23rem,calc(100vw-1.5rem))] rounded border border-cyan-500/30 bg-[#07111b]/95 p-3 font-mono text-xs text-slate-200 shadow-2xl backdrop-blur-md">
+    <section className="w-[min(23rem,calc(100vw-1.5rem))] rounded border border-cyan-500/30 bg-[#07111b]/95 p-3 font-mono text-xs text-slate-200 shadow-2xl backdrop-blur-md">
       <div className="mb-2 flex items-center justify-between border-b border-slate-800 pb-2">
         <div className="flex items-center gap-2 text-cyan-300">
           <Cpu className="h-4 w-4" />
@@ -54,26 +50,31 @@ export default function ModelRouteControls({ onRun, isLoading, modelStatus, onOp
         <span className={`h-2 w-2 rounded-full ${modelStatus?.status === 'ready' ? 'bg-emerald-400' : 'bg-amber-400'}`} />
       </div>
 
-      {/* Quick Port Presets */}
-      <div className="mb-2.5">
-        <div className="text-[9px] uppercase text-slate-400 flex items-center gap-1 mb-1 font-semibold">
-          <Anchor className="w-3 h-3 text-cyan-400" />
-          <span>Quick Departure Presets:</span>
+      {/* Coordinate Reference Box */}
+      <div className="mb-2.5 rounded bg-slate-950/80 border border-slate-800/90 p-2">
+        <div className="flex items-center justify-between text-slate-400 font-semibold mb-1.5 text-[9px] uppercase tracking-wider">
+          <span className="flex items-center gap-1 text-cyan-400">
+            <MapPin className="w-3 h-3" />
+            <span>Port Coordinates Reference:</span>
+          </span>
         </div>
-        <div className="flex flex-wrap gap-1">
-          {PRESETS.map((p) => (
-            <button
-              key={p.name}
-              type="button"
-              onClick={() => applyPreset(p)}
-              className={`px-1.5 py-0.5 rounded text-[9px] border transition-colors ${
-                values.sourceLat === p.lat && values.sourceLon === p.lon
-                  ? 'bg-cyan-600 text-white border-cyan-400 font-bold'
-                  : 'bg-slate-900/80 text-slate-300 border-slate-700 hover:border-cyan-500/60 hover:text-white'
-              }`}
+        <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[9px]">
+          {REFERENCE_COORDINATES.map((c) => (
+            <div 
+              key={c.name}
+              onClick={() => {
+                if (c.name.includes('Bharati')) {
+                  setValues(v => ({ ...v, destinationLat: c.lat, destinationLon: c.lon }));
+                } else {
+                  setSource(c.lat, c.lon);
+                }
+              }}
+              title="Click to insert into input field"
+              className="flex items-center justify-between p-0.5 rounded hover:bg-slate-800/60 cursor-pointer transition-colors"
             >
-              {p.name}
-            </button>
+              <span className="text-slate-400 truncate mr-1">{c.name.split(' ')[1] || c.name}:</span>
+              <code className="text-cyan-300 font-mono shrink-0">{c.lat}, {c.lon}</code>
+            </div>
           ))}
         </div>
       </div>
@@ -128,6 +129,7 @@ export default function ModelRouteControls({ onRun, isLoading, modelStatus, onOp
             onChange={update('destinationLat')}
             type="number"
             step="any"
+            placeholder="e.g. -69.41"
             className="mt-1 h-7 w-full rounded border border-slate-700 bg-slate-950 px-2 text-[11px] text-slate-100 outline-none focus:border-cyan-400"
           />
         </label>
@@ -138,6 +140,7 @@ export default function ModelRouteControls({ onRun, isLoading, modelStatus, onOp
             onChange={update('destinationLon')}
             type="number"
             step="any"
+            placeholder="e.g. 76.19"
             className="mt-1 h-7 w-full rounded border border-slate-700 bg-slate-950 px-2 text-[11px] text-slate-100 outline-none focus:border-cyan-400"
           />
         </label>

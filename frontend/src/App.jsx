@@ -431,24 +431,31 @@ export default function App() {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-[#101114] select-none font-sans">
-      <ModelRouteControls
-        onRun={handleModelRoute}
-        isLoading={isModelLoading}
-        modelStatus={modelStatus}
-        forecastStep={forecastStep}
-        onForecastStepChange={setForecastStep}
-        onOpenPolarPlot={() => setShowPolarModal(true)}
-      />
+      {/* Right Floating Console Stack (Route Solver + Environmental Legend) */}
+      <div className="pointer-events-none absolute right-3 top-14 z-30 flex flex-col items-end gap-2.5 max-h-[calc(100vh-4.5rem)] overflow-y-auto no-scrollbar">
+        <div className="pointer-events-auto">
+          <ModelRouteControls
+            onRun={handleModelRoute}
+            isLoading={isModelLoading}
+            modelStatus={modelStatus}
+            forecastStep={forecastStep}
+            onForecastStepChange={setForecastStep}
+            onOpenPolarPlot={() => setShowPolarModal(true)}
+          />
+        </div>
+        <div className="pointer-events-auto">
+          <MapLayerLegend
+            showRiskGrid={showRiskGrid}
+            showBathymetry={showBathymetry}
+            forecastStep={forecastStep}
+            onForecastStepChange={setForecastStep}
+            isModelRoute={modelStatus?.status === 'ready'}
+          />
+        </div>
+      </div>
       <PolarPlotModal
         isOpen={showPolarModal}
         onClose={() => setShowPolarModal(false)}
-      />
-      <MapLayerLegend
-        showRiskGrid={showRiskGrid}
-        showBathymetry={showBathymetry}
-        forecastStep={forecastStep}
-        onForecastStepChange={setForecastStep}
-        isModelRoute={modelStatus?.status === 'ready'}
       />
       {/* 3D Geospatial Earth Viewport (Full Screen Google Earth) */}
       <CesiumViewer

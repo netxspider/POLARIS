@@ -209,11 +209,12 @@ class MaritimeFairwayRouter:
         return best_node if best_node else (lat, lon)
 
     def route_to_polar_gate(
-        self, start_lat: float, start_lon: float, target_lon: float = 76.19
+        self, start_lat: float, start_lon: float, target_lat: float = -69.41, target_lon: float = 76.19
     ) -> List[Tuple[float, float]]:
         """
         Finds the shortest open-ocean path from (start_lat, start_lon) to the Antarctic
-        gateway along -50.0°S, avoiding all continental landmasses.
+        gateway along -50.0°S, avoiding all continental landmasses and entering the polar
+        optimization grid at the gate that minimizes overall voyage distance to (target_lat, target_lon).
         """
         # Check if coordinates represent an American / Western hemisphere port entered without negative sign
         if start_lon > 0:
@@ -230,17 +231,11 @@ class MaritimeFairwayRouter:
         snap_lat, snap_lon = self.snap_to_water(start_lat, start_lon)
         start_pt = (snap_lat, snap_lon)
 
-        # Target polar gate closest to target longitude (e.g. 76.19°E for Bharati or 11.73°E for Maitri)
+        # Gate candidates along the -50.0°S northern boundary of the Antarctic operational domain
         gate_candidates = [
             'polar_gate_m0', 'polar_gate_m10', 'polar_gate_m20',
             'polar_gate_40', 'polar_gate_60', 'polar_gate_76', 'polar_gate_90'
         ]
-        best_gate = min(gate_candidates, key=lambda g: abs(self.nodes[g][1] - target_lon))
-        target_gate_pt = self.nodes[best_gate]
-
-        # Check if direct line-of-sight to the target polar gate exists without land
-        if is_water_path(start_pt, target_gate_pt):
-            return [start_pt, target_gate_pt]
 
         # Connect start point to visible fairway nodes
         visible_starts = []
@@ -272,15 +267,24 @@ class MaritimeFairwayRouter:
                 continue
             visited.add(u)
 
-            if u == best_gate:
-                break
-
             for v, weight in self.graph.get(u, []):
                 new_d = cur_dist + weight
                 if new_d < dist_map[v]:
                     dist_map[v] = new_d
                     prev_map[v] = u
                     heapq.heappush(pq, (new_d, v))
+
+        # Select the gate that minimizes total maritime distance:
+        # (oceanic fairway distance to gate + great-circle distance from gate to destination)
+        best_gate = min(
+            gate_candidates,
+            key=lambda g: dist_map[g] + haversine_nm(self.nodes[g][0], self.nodes[g][1], target_lat, target_lon)
+        )
+
+        # Check if direct line-of-sight to the chosen polar gate exists without land
+        target_gate_pt = self.nodes[best_gate]
+        if is_water_path(start_pt, target_gate_pt):
+            return [start_pt, target_gate_pt]
 
         # Reconstruct path
         path_names = []

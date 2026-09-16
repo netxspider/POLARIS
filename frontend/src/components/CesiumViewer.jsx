@@ -343,6 +343,7 @@ const CesiumViewer = forwardRef(function CesiumViewer({
   playbackSpeed,
   cameraMode = 'globe',
   mapStyle = 'google-satellite', // 'google-satellite' | 'google-hybrid' | 'esri-satellite'
+  tacticalStyle = 'normal',      // 'normal' | 'surveillance' | 'thermal' | 'retro' | 'snow'
   showSatellites = false,
   showRiskGrid,
   showGeeSeaIce = false,
